@@ -1,7 +1,7 @@
 package models
 
 import (
-	"SrvControl/utils"
+	"SrvControl/models/db/mysql"
 	"fmt"
 )
 
@@ -19,7 +19,7 @@ type User struct {
 func InsertUser(user User) (int64, error) {
 	//sql:=fmt.Sprintf("insert into t_user(username, password, status, createtime) values('%s','%s',%d,%d)",user.Username, user.Password, user.Status, user.Createtime)
 	//return util.ModifyDB(sql)
-	return util.ModifyDB("insert into t_user(username, password, status, createtime) values(?,?,?,?)",
+	return mysql.ModifyDB("insert into t_user(username, password, status, createtime) values(?,?,?,?)",
 		user.Username, user.Password, user.Status, user.Createtime)
 }
 
@@ -27,7 +27,7 @@ func InsertUser(user User) (int64, error) {
 func QueryUserWightConn(con string) int {
 	sql := fmt.Sprintf("select id from t_user %s", con)
 	fmt.Println(sql)
-	row := util.QueryRowDB(sql)
+	row := mysql.QueryRowDB(sql)
 	id := 0
 	row.Scan(&id)
 	return id

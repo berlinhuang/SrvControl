@@ -11,7 +11,7 @@ type ServerController struct {
 	beego.Controller
 }
 
-func (c *ServerController) Get()  {
+func (c *ServerController) Get() {
 	name := c.GetString("name")
 	if len(name) == 0 {
 		beego.Error("name is NULL")
@@ -21,7 +21,7 @@ func (c *ServerController) Get()  {
 		return
 	}
 
-	beego.Info("get name:"+name+", and send to chatroom.html")
+	beego.Info("get name:" + name + ", and send to chatroom.html")
 	c.Data["name"] = name
 	c.TplName = "chatroom.html"
 }
@@ -61,6 +61,7 @@ func (c *ServerController) WS() {
 	defer func() {
 		leave <- client
 		client.conn.Close()
+		c.Redirect("/", 302)
 	}()
 
 	// 由于WebSocket一旦连接，便可以保持长时间通讯，则该接口函数可以一直运行下去，直到连接断开
@@ -73,7 +74,7 @@ func (c *ServerController) WS() {
 			break
 		}
 
-		beego.Info("WS-----------receive: "+string(msgStr))
+		beego.Info("WS-----------receive: " + string(msgStr))
 
 		//如果没有错误，则把用户发送的信息放入message通道中
 		var msg Message

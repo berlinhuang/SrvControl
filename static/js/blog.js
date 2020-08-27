@@ -78,13 +78,13 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             var urlStr = "/login"
-            alert("urlStr:" + urlStr)
+            // alert("urlStr:" + urlStr)
             $(form).ajaxSubmit({
                 url: urlStr,
                 type: "post",
                 dataType: "json",
                 success: function (data, status) {
-                    alert("data:" + data.message + ":" + status)
+                    alert("data:" + data.message + ":" + status+":"+data.status)
                     if (data.code == 1) {
                         setTimeout(function () {
                             window.location.href = "/"
