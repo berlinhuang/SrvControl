@@ -145,6 +145,16 @@ func RemoveAll(db, collection string, selector interface{}) error {
 	return err
 }
 
+/*
+db:操作的数据库
+collection:操作的文档(表)
+page:当前页面
+limit:每页的数量值
+query:查询条件
+selector:需要过滤的数据(projection)
+result:查询到的结果
+*/
+
 func FindPage(db, collection string, page, limit int, query, selector, result interface{}) error {
 	ms, c := connect(db, collection)
 	defer ms.Close()
@@ -174,6 +184,10 @@ func Count(db, collection string, query interface{}) (int, error) {
 	return c.Find(query).Count()
 }
 
+/**
+func (c *Collection) Bulk() *Bulk 获得大容量操作句柄后
+insert/update/remove 然后 run()
+*/
 //insert one or multi documents
 func BulkInsert(db, collection string, docs ...interface{}) (*mgo.BulkResult, error) {
 	ms, c := connect(db, collection)

@@ -13,17 +13,29 @@ import (
 
 const PAGELIMIT = 20
 
+func Log_Level(level string) int {
+	switch level {
+	case "debug":
+		return logs.LevelDebug
+	case "warn":
+		return logs.LevelWarn
+	case "info":
+		return logs.LevelInfo
+	case "trace":
+		return logs.LevelTrace
+	}
+	return logs.LevelDebug
+}
 func InitLog() {
 	exepath, err := os.Executable()
 	if err != nil {
 		panic(err)
 	}
 	exedir := filepath.Dir(exepath)
-	//logLevel := beego.AppConfig.String("log_level")
-	//logPath := beego.AppConfig.String("log_path")
 	logConf := make(map[string]interface{})
 	logConf["filename"] = fmt.Sprintf("%v\\logs\\srvctl.log", exedir)
-	logConf["level"] = logs.LevelDebug
+	var level = beego.AppConfig.String("logs::log_level")
+	logConf["level"] = Log_Level(level)
 	logConfJson, err := json.Marshal(logConf)
 	if err != nil {
 		panic(err)

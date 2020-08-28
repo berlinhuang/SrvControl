@@ -5,6 +5,7 @@ import (
 	util "SrvControl/utils"
 	"fmt"
 	"github.com/globalsign/mgo/bson"
+	"os"
 	"testing"
 	"time"
 )
@@ -28,7 +29,8 @@ const (
 	collection = "TestModel"
 )
 
-func TestMongo(t *testing.T) {
+// 测试方法1
+func testNormal(t *testing.T) {
 	util.InitLog()
 	mgo.InitMongoDB()
 	//insert one document
@@ -82,7 +84,14 @@ func TestMongo(t *testing.T) {
 
 	//find documents with page and limit
 	var resultWithPage []Data
-	err = mgo.FindPage(database, collection, 0, 4, nil, bson.M{"_id": 0}, &resultWithPage)
+	err = mgo.FindPage(
+		database,
+		collection,
+		0,
+		4,
+		nil,
+		bson.M{"_id": 0},
+		&resultWithPage)
 	fmt.Println("find docs with page and limit", resultWithPage)
 
 	//find the cursor
@@ -131,6 +140,10 @@ func TestMongo(t *testing.T) {
 		fmt.Println("upsert docment error", err)
 	}
 
+}
+
+// 测试方法2
+func testBulk(t *testing.T) {
 	//bulk insert docments
 	d1 := &Data{
 		Id:      bson.NewObjectId(),
@@ -166,4 +179,30 @@ func TestMongo(t *testing.T) {
 
 	updateAllResult, _ := mgo.BulkUpdateAll(database, collection, up5, up6)
 	fmt.Println("bulk update result", updateAllResult)
+}
+
+// 1. 测试函数T 在自定义测试函数TestOrder给定测试顺序
+func TestOrder(t *testing.T) {
+	t.Run("normal", testNormal) // T的Run方法，它用来执行子测试
+	t.Run("bulk", testBulk)
+}
+
+// 2. 基准测试函数B
+func BenchMongo(b *testing.B) {
+	// b.Run("",)// B的Run方法，它用来执行子测试
+}
+
+// 3. 示例函数Example开头
+func ExampleMongo() {
+
+}
+
+// 主函数 os.Exit(m.Run())
+func TestMain(m *testing.M) {
+	println("TestMain setup")
+	util.InitLog()
+	mgo.InitMongoDB()
+	retCode := m.Run() // 执行测试，包括单元测试、性能测试和示例测试
+	println("TestMain tear-down")
+	os.Exit(retCode) //如果所有测试均通过测试，m.Run()返回0，否同m.Run()返回1，代表测试失败
 }
