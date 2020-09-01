@@ -5,6 +5,7 @@ package bitarray
 import (
 	"fmt"
 	"log"
+	"strconv"
 )
 
 type Bit struct {
@@ -51,6 +52,49 @@ func (ba *BitArray) FromInt(value int) {
 	for i := 1; i <= length; i++ {
 		ba.bits[length-i].value = (((value << i) & comparison) >> length) == 1
 	}
+}
+func (ba *BitArray) initFromTo(from, to int, value int) {
+	length := from - to + 1
+	comparison := 1 << length
+	k := 0
+	for i := to; i <= from; i++ {
+		b := (((value << (k + 1)) & comparison) >> length) == 1
+		idx := from - k
+		ba.bits[idx].value = b
+		k = k + 1
+	}
+}
+
+// 用形如"A3F82D"字符串初始化bitarray
+func (ba *BitArray) FromString(strValue string) {
+	length := len(strValue)
+	if strValue == "" || length <= 0 {
+		ba.FromInt(0)
+		return
+	}
+	if length%2 != 0 { //基数 前面补0
+		strValue = "0" + strValue
+		length = length + 1
+	}
+	if ba.GetArrayLen() < length*8 {
+		log.Fatal("BitArray长度不够")
+	}
+	k := 0
+	for i := length - 2; i >= 0; i = i - 2 {
+		dec, err := strconv.ParseUint(strValue[i:i+2], 16, 8)
+		if err != nil {
+			log.Fatalln("ParseUint失败")
+		}
+		from := ba.GetArrayLen() - 1 - k*8
+		to := ba.GetArrayLen() - 1 - k*8 - 7
+		ba.initFromTo(from, to, int(dec))
+		k = k + 1
+	}
+}
+
+func (ba *BitArray) ToString() string {
+
+	return ""
 }
 
 // 将bitarray转化为十进制并返回

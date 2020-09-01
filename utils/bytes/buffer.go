@@ -1,5 +1,8 @@
 package bytes
 
+// 对bytes.buffer的改进
+// rune => int32
+// byte => uint8
 import (
 	errors "SrvControl/utils/error"
 	"bytes"
@@ -513,7 +516,7 @@ func (b *Buffer) WriteInt8(int8 int8) {
 }
 
 func (b *Buffer) WriteUInt8(uint8 uint8) {
-	b.WriteByte(byte(uint8))
+	b.WriteByte(uint8)
 }
 
 func (b *Buffer) WriteInt16(int16 int16) {
@@ -692,7 +695,6 @@ func (b *Buffer) Seek(offset int, whence int) (int, error) {
 
 ///////////////////////////////////////
 func (b *Buffer) WriteBytes(bytes []byte, offset int, length int, bytesLen uint32) {
-
 	//if (length<=0) {
 	//	length = (int)(len(bytes))-offset
 	//}
